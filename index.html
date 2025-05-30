@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 외국어 학습 앱 - 시작</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="app_icon.png" type="image/png"> <!-- 앱 아이콘 추가 -->
+    <link rel="apple-touch-icon" href="app_icon.png"> <!-- iOS 홈 화면 아이콘용 -->
+</head>
+<body>
+    <div class="container">
+        <h1>나만의 외국어 학습 앱</h1>
+
+        <!-- 학습 스케줄 섹션 (맨 위로 이동) -->
+        <div class="section-schedule">
+            <h2>학습 스케줄</h2>
+            <p id="overallScheduleDisplay" class="status-message">데이터를 불러오거나 스케줄을 설정하세요.</p>
+            <div id="dailyScheduleButtons" class="schedule-buttons-container">
+                <!-- Day buttons will be inserted here by JavaScript -->
+            </div>
+            <button id="adjustScheduleBtn">스케줄 조정</button>
+        </div>
+
+        <hr>
+
+        <!-- 학습 시작 버튼 (학습 스케줄 바로 아래로 이동) -->
+        <div class="section-start-study">
+            <button id="startStudyBtn">전체 학습하기</button> <!-- 텍스트 변경 -->
+        </div>
+
+        <hr>
+
+        <!-- 새로운 단어 추가 섹션 -->
+        <div class="section-add-word">
+            <h2>새로운 단어 추가</h2>
+            <textarea id="newForeignWord" placeholder="외국어 단어" class="input-field" rows="1"></textarea> <!-- input -> textarea -->
+            <textarea id="newMeaning" placeholder="의미" class="input-field" rows="1"></textarea> <!-- input -> textarea -->
+            <button id="addWordBtn">단어 추가</button>
+        </div>
+
+        <hr>
+
+        <!-- 찾기 기능 섹션 -->
+        <div class="section-search">
+            <h2>단어 검색</h2>
+            <input type="text" id="searchTerm" placeholder="검색할 외국어 또는 모국어 단어" class="input-field">
+            <button id="searchBtn">검색</button>
+            <div id="searchResults" class="search-results-container">
+                <!-- 검색 결과가 여기에 동적으로 추가됩니다. -->
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- 데이터 관리 섹션 (맨 아래로 이동) -->
+        <div class="section-data-management">
+            <h2>데이터 관리</h2>
+            <div class="button-row"> <!-- 내보내기 버튼을 한 줄에 배치하기 위한 div 추가 -->
+                <button id="exportCsvBtn">CSV 내보내기</button>
+                <button id="exportJsonBtn">JSON 내보내기</button>
+            </div>
+            <div style="margin-top: 10px;">
+                <input type="file" id="importFile" accept=".csv, .json" style="display: none;">
+                <button id="importBtn">CSV / JSON 파일 가져오기</button>
+                <span id="fileNameDisplay">파일 선택 안됨</span>
+                <button id="confirmImportBtn" style="display: none;">불러오기</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="first_page.js"></script>
+</body>
+</html>

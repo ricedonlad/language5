@@ -1,0 +1,762 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 상단 정렬 */
+    min-height: 100vh;
+    background-color: #f4f7f6;
+    margin: 20px;
+    color: #333;
+    box-sizing: border-box; /* 모든 요소에 기본적으로 적용될 수 있도록 */
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+/* 메인 헤더 (제목 + 홈/모드 버튼) */
+.main-header {
+    margin-bottom: 25px;
+    /* PC에서는 h1과 mode-selection-container가 세로로 쌓임 */
+    display: flex;
+    flex-direction: column; 
+    align-items: center; /* 자식 요소들 가운데 정렬 */
+}
+
+.main-header h1 {
+    color: #2c3e50;
+    margin-bottom: 15px; /* 제목 아래 여백 조정 */
+    font-size: 1.8em;
+}
+
+.mode-selection-container {
+    display: flex;
+    justify-content: center; /* 홈 버튼과 모드 선택 버튼을 함께 중앙 정렬 */
+    align-items: center;
+    gap: 10px; /* 홈 버튼과 모드 선택 버튼 사이 간격 */
+    margin-bottom: 25px; /* 헤더 전체 아래 여백 */
+    width: 100%; /* 가로 공간 최대한 활용 */
+    flex-wrap: wrap; /* 공간 부족 시 다음 줄로 */
+}
+
+.mode-selection {
+    display: flex;
+    gap: 10px;
+}
+
+.mode-selection button {
+    background-color: #ecf0f1;
+    color: #333;
+    border: 1px solid #bdc3c7;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    box-sizing: border-box; /* 버튼 패딩 포함 크기 계산 */
+}
+
+.mode-selection button.active {
+    background-color: #3498db;
+    color: #ffffff;
+    border-color: #3498db;
+}
+
+.mode-selection button:hover:not(.active) {
+    background-color: #e0e6e9;
+}
+
+.word-display-area {
+    background-color: #e8f0fe; /* Light blue background */
+    border: 1px solid #cce0ff;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 15px; /* 내비게이션 버튼과의 간격 조정 */
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    /* word-display-area 내의 텍스트 선택 방지는 그대로 유지 */
+    user-select: none;
+    -webkit-user-select: none; /* WebKit browsers */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    -webkit-touch-callout: none; /* iOS Safari long-press callout */
+}
+
+.word-card {
+    display: flex; /* Flexbox로 가로로 배치 */
+    justify-content: space-around; /* 요소들을 균등하게 배치 */
+    align-items: center;
+    min-height: 120px; /* 카드 최소 높이 증가 */
+    gap: 15px; /* 두 박스 사이 간격 */
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
+}
+
+.word-box {
+    background-color: #f7faff;
+    border: 1px solid #d0e0ff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 중앙 정렬 */
+    align-items: center; /* 수평 중앙 정렬 */
+    flex: 1; /* 가용한 공간을 균등하게 분배 */
+    min-width: 180px; /* 너무 작아지지 않도록 최소 너비 설정 */
+    position: relative; /* 오버레이를 위해 */
+    overflow: hidden; /* 오버레이가 박스 밖으로 나가지 않도록 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.word-label {
+    font-size: 0.8em;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+}
+
+.word-text {
+    margin: 0;
+    text-align: center; /* 텍스트 중앙 정렬 */
+    word-break: keep-all; /* 단어가 길 경우 줄바꿈 유지 */
+    width: 100%; /* 부모 요소의 전체 너비 사용 */
+}
+
+.foreign-word {
+    /* JavaScript로 font-size를 직접 제어하므로 여기서는 초기값만 설정 */
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2980b9;
+}
+
+.meaning {
+    /* JavaScript로 font-size를 직접 제어하므로 여기서는 초기값만 설정 */
+    font-size: 1.1em;
+    color: #555;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1); /* 완전 불투명 검정으로 변경 */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.overlay:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* 호버 시 약간 투명하게 */
+}
+
+.overlay.hidden {
+    display: none;
+}
+
+/* 통합 컨트롤 바 */
+.unified-controls-bar {
+    display: flex;
+    justify-content: space-between; /* 양쪽 끝으로 정렬 */
+    align-items: center;
+    margin-bottom: 25px; /* 단어 표시 영역과의 간격 */
+    padding: 5px 0; /* 내부 여백 */
+    border-bottom: 1px solid #eee; /* 하단 구분선 */
+    padding-bottom: 10px;
+    flex-wrap: wrap; /* 공간 부족 시 다음 줄로 */
+}
+
+.controls-group-left, .controls-group-right {
+    display: flex;
+    gap: 8px; /* 아이콘들 사이 간격 */
+    align-items: center;
+    flex-wrap: nowrap; /* PC에서 그룹 내 아이콘은 줄 바꿈 안 함 */
+}
+
+/* 아이콘 버튼 공통 스타일 (기존 .icon-button과 통합) */
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    position: relative; /* 아이콘 오버레이 텍스트용 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.icon-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon-button img {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+/* 즐겨찾기 모두 해제 아이콘에 X 표시 */
+.clear-favorites-button {
+    position: relative; /* 자식 요소인 icon-overlay-text의 기준 */
+    /* 현재는 display: none이므로, 보일 때를 대비한 스타일 */
+}
+
+.clear-favorites-button .icon-overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2em;
+    font-weight: bold;
+    color: red; /* X표시 색상 */
+    line-height: 1; /* 텍스트 정렬 */
+    text-shadow: 0 0 2px rgba(255,255,255,0.8); /* 배경과의 대비 */
+}
+
+
+/* 내비게이션 영역 (이제 스와이프 영역이 아님) */
+.navigation-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* 단어 카운트와의 간격 */
+    gap: 15px; /* 버튼과 메시지 사이 간격 */
+}
+
+/* 버튼 크기 통일 */
+.navigation-area button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    width: 120px; /* 고정 너비 설정 */
+    flex-shrink: 0; /* 줄어들지 않도록 */
+    transition: background-color 0.3s, transform 0.1s;
+    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.navigation-area button:hover {
+    background-color: #27ae60;
+    transform: translateY(-1px);
+}
+
+.navigation-area button:active {
+    transform: translateY(0);
+}
+
+.navigation-area button:disabled { /* 비활성화 버튼 스타일 */
+    background-color: #bdc3c7; /* 회색 */
+    cursor: not-allowed;
+    transform: none;
+}
+.navigation-area button:disabled:hover {
+    background-color: #bdc3c7;
+}
+
+.status-message {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 0.95em;
+    flex-grow: 1; /* 메시지 영역이 남은 공간을 차지 */
+    text-align: center; /* 메시지 가운데 정렬 */
+    min-width: 80px; /* 메시지가 너무 작아지지 않도록 최소 너비 */
+}
+
+.word-count {
+    margin-bottom: 30px; /* 스와이프 영역과의 간격을 위해 조정 */
+    font-size: 1.1em;
+    color: #7f8c8d;
+}
+
+/* 스와이프 전용 독립 영역 */
+.swipe-interaction-area {
+    background-color: #f0f8ff; /* 연한 파란색 배경 (시각적 구분) */
+    border: 1px solid #cce0ff;
+    border-radius: 10px;
+    padding: 25px; /* 내부 여백 (스와이프를 위한 충분한 공간) */
+    margin-bottom: 30px; /* 다음 섹션과의 간격 */
+    min-height: 100px; /* 스와이프 가능한 충분한 높이 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    /* 스와이프 영역 내 텍스트 선택 방지 및 터치 동작 제어 */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: pan-y; /* 수직 스크롤은 허용하되, 수평 제스처는 OS에 의해 방지 */
+    cursor: grab; /* 스와이프 가능함을 시각적으로 표시 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.swipe-interaction-area:active {
+    cursor: grabbing;
+}
+
+.swipe-instruction {
+    color: #555;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 35px 0;
+}
+
+/* 모든 섹션에 공통 스타일 적용 */
+.section-add-word, .section-edit-word, .section-data-management, .section-schedule, .section-start-study, .section-search, .section-clear-favorites {
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+/* 모든 섹션 제목에 공통 스타일 적용 */
+.section-add-word h2, .section-edit-word h2, .section-data-management h2, .section-schedule h2, .section-start-study h2, .section-search h2 {
+    color: #34495e;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.input-field {
+    width: calc(100% - 20px);
+    padding: 12px 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    /* 자동 확장 textarea를 위한 초기 스타일 */
+    overflow: hidden; /* 스크롤바 숨김 */
+    resize: none; /* 사용자 크기 조절 비활성화 (JS가 담당) */
+    vertical-align: top; /* 텍스트 시작 지점 */
+    line-height: 1.5em; /* 텍스트 줄 높이 일관성 유지 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.input-field::placeholder {
+    color: #bbb;
+}
+
+/* 버튼들을 한 줄에 배열하는 컨테이너 */
+.button-row {
+    display: flex;
+    gap: 10px; /* 버튼들 사이의 간격 */
+    margin-bottom: 10px; /* 버튼 행 아래 여백 */
+}
+
+.button-row button {
+    flex: 1; /* 자식 버튼들이 공간을 균등하게 분할 */
+}
+
+/* 모든 버튼에 공통 스타일 적용 */
+.section-add-word button, .section-edit-word button, .section-data-management button, .section-schedule button, .section-start-study button, .section-search button, .button-row button {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 100%; /* flex:1로 인해 기본적으로 100%를 나누므로, 명시적인 width는 필요 없음 */
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+    /* margin-bottom은 .button-row에서 관리되므로 여기서는 제거 */
+}
+
+.section-data-management button {
+    background-color: #9b59b6; /* Export/Import buttons */
+}
+
+.section-schedule button {
+    background-color: #2ecc71; /* Adjust Schedule button */
+}
+.section-start-study button {
+    background-color: #3498db; /* Start Study button */
+}
+
+/* 검색 버튼 */
+.section-search button {
+    background-color: #3498db; /* Search button color */
+}
+
+.section-add-word button:hover {
+    background-color: #e67e22;
+}
+.section-edit-word button:hover {
+    background-color: #f39c12; /* Keep same hover as add button */
+}
+.section-data-management button:hover {
+    background-color: #8e44ad;
+}
+.section-schedule button:hover {
+    background-color: #27ae60;
+}
+.section-start-study button:hover {
+    background-color: #2980b9;
+}
+.section-search button:hover {
+    background-color: #2980b9;
+}
+
+
+.cancel-button {
+    background-color: #7f8c8d !important; /* 회색 톤 */
+}
+
+.cancel-button:hover {
+    background-color: #95a5a6 !important; /* 더 밝은 회색 */
+}
+
+#fileNameDisplay {
+    margin-left: 10px;
+    font-size: 0.9em;
+    color: #555;
+    vertical-align: middle;
+}
+
+#confirmImportBtn {
+    background-color: #c0392b; /* Danger color for confirmation */
+}
+
+#confirmImportBtn:hover {
+    background-color: #a93226;
+}
+
+/* Daily Schedule Buttons Container */
+.schedule-buttons-container {
+    display: flex;
+    flex-wrap: wrap; /* 버튼들이 여러 줄로 표시되도록 */
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.schedule-buttons-container button {
+    background-color: #3498db; /* Blue for active days */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    min-width: 70px; /* 버튼 최소 너비 */
+    flex-grow: 1; /* 가용 공간을 균등하게 분배 */
+    max-width: 120px; /* 최대 너비 제한 (너무 커지지 않게) */
+    transition: background-color 0.3s;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.schedule-buttons-container button:hover {
+    background-color: #2980b9;
+}
+
+.schedule-buttons-container button.completed {
+    background-color: #2ecc71; /* Green for completed days */
+}
+.schedule-buttons-container button.completed:hover {
+    background-color: #27ae60;
+}
+
+/* 검색 결과 컨테이너 */
+.search-results-container {
+    margin-top: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    max-height: 250px; /* 스크롤바 생성을 위해 최대 높이 설정 */
+    overflow-y: auto; /* 내용이 넘치면 스크롤 */
+    background-color: #fcfcfc;
+    padding: 10px;
+}
+
+.search-results-container p {
+    color: #777;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* 개별 검색 결과 항목 */
+.search-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.95em;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background-color: #eef;
+}
+
+.search-word-foreign {
+    font-weight: bold;
+    color: #2980b9;
+    flex-basis: 40%; /* 외국어 단어 비중 */
+    text-align: left;
+}
+
+.search-word-meaning {
+    color: #555;
+    flex-basis: 40%; /* 의미 비중 */
+    text-align: left;
+}
+
+.search-word-day {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    flex-basis: 20%; /* Day 정보 비중 */
+    text-align: right;
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+/* 즐겨찾기 일괄 삭제 버튼 */
+.section-clear-favorites button {
+    background-color: #e74c3c; /* Red for destructive action */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+}
+
+.section-clear-favorites button:hover {
+    background-color: #c0392b;
+}
+
+/* 맨 위 내비게이션 바 (홈 버튼) - 이 선택자는 이제 .mode-selection-container 내부에서 사용 */
+/* .top-navigation { ... } */
+
+.home-button { /* .icon-button와 병합하여 사용 */
+    background-color: #6c757d; /* 회색 배경 */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* 아이콘과 텍스트 사이 간격 */
+    transition: background-color 0.2s;
+    flex-shrink: 0; /* 모바일에서 버튼이 줄어들지 않도록 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.home-button:hover {
+    background-color: #5a6268;
+}
+
+.home-button img {
+    filter: invert(100%); /* 아이콘을 흰색으로 변경 */
+}
+
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .container {
+        margin: 10px;
+        padding: 15px; /* 전체 패딩 줄임 */
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 1.4em; /* 제목 폰트 크기 줄임 */
+        margin-bottom: 15px; /* 제목 아래 여백 조정 */
+    }
+    
+    .main-header {
+        margin-bottom: 10px; /* 모바일에서 헤더 여백 조정 */
+    }
+
+    .main-header h1 {
+        margin-bottom: 8px; /* 제목 아래 여백 조정 */
+    }
+
+    .mode-selection-container {
+        gap: 8px; /* 버튼 사이 간격 줄임 */
+        margin-bottom: 15px; /* 헤더 아래 여백 조정 */
+    }
+    
+    .mode-selection button, .home-button {
+        padding: 8px 15px; /* 버튼 패딩 줄임 */
+        font-size: 0.9em; /* 버튼 폰트 크기 줄임 */
+        min-width: unset; /* 최소 너비 제한 해제 */
+        flex-basis: auto; /* 자동 너비 */
+        flex-grow: 1; /* 가능한 공간 채우기 */
+        max-width: 48%; /* 두 버튼이 한 줄에 적절히 배치되도록 */
+        white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    }
+    .mode-selection { /* mode-selection 자체도 flex 속성으로 자식 버튼 배치 최적화 */
+        flex-grow: 1;
+        flex-basis: auto;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .word-card {
+        flex-direction: column; /* 세로로 쌓기 */
+        gap: 8px; /* 박스 사이 간격 줄임 */
+        min-height: 100px; /* 카드 최소 높이 조정 */
+    }
+    .word-box {
+        width: 100%; /* 전체 너비 차지 */
+        min-width: unset; /* 최소 너비 제한 해제 */
+        padding: 12px 15px; /* 단어 박스 패딩 줄임 */
+        min-height: 70px; /* 단어 박스 최소 높이 조정 */
+    }
+
+    /* 폰트 크기 조절 옵션도 반응형 적용 */
+    /* .font-size-control는 이제 .unified-controls-bar 내부에 개별 아이콘으로 통합됨 */
+
+    /* 통합 컨트롤 바 모바일 조정 */
+    .unified-controls-bar {
+        flex-direction: row; /* 모바일에서도 가로 정렬 유지 (전략) */
+        flex-wrap: wrap; /* 공간 부족 시 줄 바꿈 허용 */
+        justify-content: center; /* 중앙 정렬 */
+        gap: 8px; /* 그룹 사이 간격 줄임 */
+        margin-bottom: 15px; /* 간격 줄임 */
+        padding-bottom: 8px; /* 하단 패딩 줄임 */
+    }
+    .controls-group-left, .controls-group-right {
+        width: auto; /* 그룹 너비 자동 조정 */
+        justify-content: center; /* 그룹 내 아이콘 중앙 정렬 */
+        gap: 5px; /* 아이콘 간격 더 줄임 */
+        flex-wrap: wrap; /* 필요시 아이콘 자체도 줄바꿈 */
+        flex-basis: 48%; /* 두 그룹이 한 줄에 적절히 배치되도록 */
+        margin: 2px 0; /* 그룹 간의 미세한 수직 여백 */
+    }
+    .unified-controls-bar .icon-button {
+        padding: 3px; /* 아이콘 버튼 패딩 더 작게 */
+        width: 30px; /* 아이콘 버튼 고정 크기 조정 */
+        height: 30px;
+        font-size: 0.75em; /* 폰트 크기 아이콘 텍스트 */
+    }
+    .unified-controls-bar .icon-button img {
+        width: 18px; /* 아이콘 이미지 크기 조정 */
+        height: 18px;
+    }
+
+    .navigation-area button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        width: 100px; /* 모바일에서 버튼 고정 너비 조정 */
+    }
+    
+    .status-message {
+        min-width: unset; /* 모바일에서 최소 너비 제한 해제 */
+        font-size: 0.85em; /* 상태 메시지 폰트 크기 줄임 */
+    }
+
+    .word-count {
+        margin-bottom: 15px; /* 스와이프 영역과의 간격을 위해 조정 */
+        font-size: 1em; /* 폰트 크기 조정 */
+    }
+
+    .swipe-interaction-area {
+        padding: 15px; /* 작은 화면에서 패딩 줄임 */
+        min-height: 80px; /* 작은 화면에서 높이 줄임 */
+        margin-bottom: 15px; /* 다음 섹션과의 간격 줄임 */
+    }
+    .swipe-instruction {
+        font-size: 1em; /* 폰트 크기 조정 */
+    }
+
+
+    hr {
+        margin: 20px 0; /* 구분선 여백 줄임 */
+    }
+
+    /* 모든 섹션에 공통 스타일 적용 */
+    .section-add-word, .section-edit-word, .section-data-management, .section-schedule, .section-start-study, .section-search, .section-clear-favorites {
+        margin-bottom: 15px; /* 섹션 간 여백 줄임 */
+    }
+
+    /* 모든 섹션 제목에 공통 스타일 적용 */
+    .section-add-word h2, .section-edit-word h2, .section-data-management h2, .section-schedule h2, .section-start-study h2, .section-search h2 {
+        margin-bottom: 10px; /* 섹션 제목 아래 여백 줄임 */
+        font-size: 1.3em; /* 섹션 제목 폰트 크기 줄임 */
+    }
+
+    .input-field {
+        width: calc(100% - 10px); /* 너비 조정 (패딩 고려) */
+        padding: 10px 5px; /* 패딩 줄임 */
+        margin-bottom: 10px; /* 아래 여백 줄임 */
+        font-size: 0.9em; /* 폰트 크기 줄임 */
+    }
+
+    .button-row {
+        gap: 8px; /* 버튼들 사이의 간격 줄임 */
+        margin-bottom: 8px; /* 버튼 행 아래 여백 줄임 */
+    }
+
+    .section-add-word button, .section-edit-word button, .section-data-management button, .section-schedule button, .section-start-study button, .section-search button, .button-row button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+
+    .schedule-buttons-container {
+        gap: 8px; /* Day 버튼 간격 줄임 */
+        margin-top: 10px; /* Day 버튼 위 여백 줄임 */
+        margin-bottom: 15px; /* Day 버튼 아래 여백 줄임 */
+    }
+    .schedule-buttons-container button {
+        padding: 6px 10px; /* Day 버튼 패딩 줄임 */
+        font-size: 0.85em; /* Day 버튼 폰트 크기 줄임 */
+        min-width: 60px; /* Day 버튼 최소 너비 조정 */
+        max-width: 48%; /* Day 버튼 최대 너비 조정 */
+    }
+
+    .search-results-container {
+        margin-top: 10px; /* 검색 결과 위 여백 줄임 */
+        max-height: 200px; /* 검색 결과 최대 높이 줄임 */
+        padding: 8px; /* 검색 결과 패딩 줄임 */
+    }
+
+    .search-result-item {
+        padding: 8px 10px; /* 검색 결과 아이템 패딩 줄임 */
+        font-size: 0.9em; /* 검색 결과 아이템 폰트 크기 줄임 */
+    }
+    .search-word-foreign, .search-word-meaning, .search-word-day {
+        font-size: 0.85em; /* 검색 결과 세부 폰트 크기 줄임 */
+    }
+}

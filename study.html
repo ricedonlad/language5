@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 외국어 학습 앱</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="app_icon.png" type="image/png"> <!-- 앱 아이콘 추가 -->
+    <link rel="apple-touch-icon" href="app_icon.png"> <!-- iOS 홈 화면 아이콘용 -->
+</head>
+<body>
+    <div class="container">
+        <div class="main-header">
+            <h1>나만의 외국어 학습 앱</h1>
+            <div class="mode-selection-container">
+                <!-- 홈 버튼이 이제 이 라인에 함께 위치 -->
+                <button id="homeBtn" class="icon-button home-button">
+                    <img src="https://img.icons8.com/ios-filled/24/000000/home.png" alt="홈으로">
+                    <span>홈</span>
+                </button>
+                <div class="mode-selection">
+                    <button id="generalModeBtn" class="active">일반 모드</button>
+                    <button id="favoriteModeBtn">즐겨찾기 모드</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 통합 컨트롤 바: 표시모드/폰트/즐겨찾기해제 (왼쪽) + 단어액션 (오른쪽) -->
+        <div class="unified-controls-bar">
+            <div class="controls-group-left">
+                <!-- 표시 모드 전환 아이콘 (A->B / B->A) -->
+                <button id="toggleDisplayModeBtn" class="icon-button">
+                    <img id="displayModeIcon" src="https://img.icons8.com/ios-glyphs/24/000000/forward--v1.png" alt="모드 전환">
+                </button>
+                <!-- 폰트 크기 조절 아이콘 -->
+                <button id="decreaseFontSizeBtn" class="icon-button font-size-icon-button">
+                    <img src="https://img.icons8.com/ios-glyphs/24/000000/minus.png" alt="폰트 작게">
+                </button>
+                <button id="increaseFontSizeBtn" class="icon-button font-size-icon-button">
+                    <img src="https://img.icons8.com/ios-glyphs/24/000000/plus.png" alt="폰트 크게">
+                </button>
+                <!-- 현재 Day 즐겨찾기 모두 해제 아이콘 -->
+                <button id="clearFavoritesDayBtn" class="icon-button clear-favorites-button"> <!-- style="display: none;" 제거 -->
+                    <img src="https://img.icons8.com/ios-glyphs/24/000000/filled-star.png" alt="즐겨찾기 모두 해제">
+                    <span class="icon-overlay-text">X</span> <!-- 삭제 표시를 위한 오버레이 텍스트 -->
+                </button>
+            </div>
+            <div class="controls-group-right">
+                <!-- 기존 발음, 즐겨찾기, 수정, 삭제 아이콘 -->
+                <button id="speakBtn" class="icon-button">
+                    <img src="https://img.icons8.com/ios-filled/24/000000/speaker.png" alt="발음 듣기">
+                </button>
+                <button id="favoriteBtn" class="icon-button">
+                    <img id="favoriteIcon" src="https://img.icons8.com/ios-glyphs/24/000000/star--v1.png" alt="즐겨찾기">
+                </button>
+                <button id="editBtn" class="icon-button">
+                    <img src="https://img.icons8.com/ios-glyphs/24/000000/edit--v1.png" alt="수정">
+                </button>
+                <button id="deleteBtn" class="icon-button">
+                    <img src="https://img.icons8.com/ios-glyphs/24/000000/filled-trash.png" alt="삭제">
+                </button>
+            </div>
+        </div>
+        <!-- 통합 컨트롤 바 끝 -->
+
+
+        <div class="word-display-area">
+            <div class="word-card">
+                <!-- 외국어 (A) -->
+                <div class="word-box foreign-word-box">
+                    <p class="word-label">외국어</p>
+                    <p id="foreignWord" class="word-text foreign-word">Loading...</p>
+                    <div id="foreignOverlay" class="overlay">클릭하여 보기</div>
+                </div>
+                <!-- 모국어 (B) -->
+                <div class="word-box meaning-box">
+                    <p class="word-label">모국어</p>
+                    <p id="meaning" class="word-text meaning">Loading...</p>
+                    <div id="meaningOverlay" class="overlay">클릭하여 보기</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 내비게이션 버튼과 페이지 표시 -->
+        <div class="navigation-area">
+            <button id="prevBtn">&lt; 앞장</button>
+            <span id="statusMessage" class="status-message"></span>
+            <button id="nextBtn">뒷장 &gt;</button>
+        </div>
+
+        <div class="word-count">
+            <span id="currentWordIndex">1</span> / <span id="totalWords">1</span>
+        </div>
+        <!-- 내비게이션 버튼과 페이지 표시 끝 -->
+
+
+        <!-- 스와이프 전용 독립 영역 -->
+        <div id="swipeInteractionArea" class="swipe-interaction-area">
+            <!-- 이 안에서는 오직 스와이프만 감지됩니다. -->
+            <p class="swipe-instruction">좌우로 스와이프하여 다음 단어 보기</p>
+        </div>
+        <!-- 스와이프 전용 독립 영역 끝 -->
+        
+        <hr>
+
+        <!-- 단어 수정 섹션 -->
+        <div class="section-edit-word" style="display: none;">
+            <h2>단어 수정</h2>
+            <input type="text" id="editForeignWord" placeholder="수정할 외국어 단어" class="input-field">
+            <input type="text" id="editMeaning" placeholder="수정할 의미" class="input-field">
+            <button id="saveEditBtn">수정 완료</button>
+            <button id="cancelEditBtn" class="cancel-button">취소</button>
+        </div>
+
+        <hr class="edit-hr" style="display: none;">
+
+    </div>
+
+    <script src="study_page.js"></script>
+</body>
+</html>
